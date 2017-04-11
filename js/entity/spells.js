@@ -35,6 +35,7 @@ class Spells extends Phaser.Sprite {
              this.turnTimerProgress.x = this._playerPositionX - 26;
         this.turnTimerProgress.y = this._playerPositionY + 38;
         this.turnTimer.visible = true;
+        this.turnTimerProgress.visible = true;
         this._combatCycle();
     }
     
@@ -46,16 +47,24 @@ class Spells extends Phaser.Sprite {
         } else {
                
         }
+        if(this.turnTimer.visible){
         this.turnTimerTween.onComplete.add(this._combatCycle, this);
+            console.log('restartingcombatcycle');
+        }
     }
     
-    _fireSpell(){
-         
-        
-    }
+//    _fireSpell(){
+//         
+//        
+//    }
         _selectSpell(currentSpell) {
             this.currentSpell = currentSpell;
-          
+            this.spellArrow.x = this.game.camera.x + 28;
+            this.spellArrow.y = this.spellSlot.y - 24;
+            for(var i = 0; i < this.spellSelector; i++){
+            this.spellArrow.x += 72;
+             }
+            this.spellArrow.visible = true;
     }
     
     
@@ -65,16 +74,19 @@ class Spells extends Phaser.Sprite {
     _endCombatMode() {
         this.spellSlotGroup.visible = false;
         this.turnTimer.visible = false;
+        this.spellArrow.visible = false;
+        this.turnTimerProgress.visible = false;
+        this.turnTimerTween.stop();
     }
 
     _spellSelection() {
         this.slotDistance = 10;
         for (var i = 0; i < this.spellArray.length; i++) {
             console.log('shazbot');
-            this.spellSlot = this.game.add.image(this.slotDistance, 488, 'SpellSlot');
+            this.spellSlot = this.game.add.image(this.slotDistance, 492, 'SpellSlot');
             this.spellSlotGroup.add(this.spellSlot);
             this.spellSlot.fixedToCamera = true;
-            this.spellIcon = this.game.add.image(this.slotDistance + 10, 498, 'spellIcons');
+            this.spellIcon = this.game.add.image(this.slotDistance + 6, 498, 'spellIcons');
             this.spellSlotGroup.add(this.spellIcon);
             this.spellIcon.fixedToCamera = true;
             this.slotDistance += 72;
@@ -83,8 +95,9 @@ class Spells extends Phaser.Sprite {
             let spellSelector = i;
             let spellAssigner = this.spellArray[i][1];
             this.spellIcon.events.onInputDown.add(function () {
-                this._selectSpell(spellAssigner),
-                    this.spellSelector = spellSelector;
+              
+                    this.spellSelector = spellSelector,
+                  this._selectSpell(spellAssigner);
                   console.log(this.spellSelector);
             }, this);
         }
@@ -93,6 +106,9 @@ class Spells extends Phaser.Sprite {
         this.turnTimer.visible = false;
         this.turnTimerProgress = this.game.add.tileSprite(0, 0, 54, 4, 'turnTimerProgress');
         this.turnTimerProgress.anchor.setTo(0.0);
+        
+        this.spellArrow = this.game.add.image (28,540, 'spellArrow');
+        this.spellArrow.visible = false;
        // this.turnTimer.addchild(this.turnTimerProgress);
     }
 
@@ -174,11 +190,11 @@ class Spells extends Phaser.Sprite {
 
     _manaBlast() {
         console.log('ManaBlast!');
-        //        this.damage = 3;
-        //        this.AttackSpell = this.AttackSpells.getFirstDead();
-        //        this.AttackSpell.reset(this._playerPositionX, this._playerPositionY);
-        //        this.AttackSpell.body.velocity.x = 500;
-        //        this.AttackSpell.frame = 2;
+                this.damage = 3;
+                this.AttackSpell = this.AttackSpells.getFirstDead();
+                this.AttackSpell.reset(this._playerPositionX, this._playerPositionY);
+                this.AttackSpell.body.velocity.x = 500;
+                this.AttackSpell.frame = 2;
 
     }
 

@@ -85,11 +85,20 @@ class SimpleLevel extends Phaser.State {
 
     
     _initCombatMode(){
+        if(this.combatModeEnabled === false){
         this._spells._startCombatMode();
         this.player._combatModeEnabled();
+            this.combatModeEnabled = true;
+        } else {
+            this._spells._endCombatMode();
+             this.player._combat_mode_engaged = false;
+            this.player._cursorReset();
+            this.combatModeEnabled = false;
+            
+        }
     }
     _endCombatMode(){
-        
+          this._spells._endCombatMode();
     }
 
 
@@ -106,7 +115,7 @@ class SimpleLevel extends Phaser.State {
         //set the physics
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
         this._loadLevel();
-        
+        this.combatModeEnabled = false;
         this._addPlayer(0, 0);
         this._addEnemy();
         this._addSpells();

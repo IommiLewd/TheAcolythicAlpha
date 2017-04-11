@@ -33,7 +33,7 @@ class Player extends Phaser.Sprite {
         this.cursor.enableBody = true;
         this.cursor.physicsBodyType = Phaser.Physics.ARCADE;
         this.cursor.setAll('body.collideWorldBounds', true);
-        this.cursor.createMultiple(1, 'pointer');
+        this.cursor.createMultiple(1, 'spellArrow');
     }
 
     _addNavigator() {
