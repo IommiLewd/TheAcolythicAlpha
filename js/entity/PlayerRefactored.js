@@ -25,7 +25,7 @@ class Player extends Phaser.Sprite {
         this.animations.add('standing', [0, 1, 2, 3, 4], 6, true);
         this.animations.add('firing', [5, 6, 7, 8, 9], 6, true);
         this.animations.add('walking', [10, 11, 12, 13, 14], 4, true);
-        this.animations.add('climbing', [15, 16, 17, 18, 19], 6, true);
+        this.animations.add('climbing', [15, 16, 17,/* 18, */19], 6, true);
     }
 
     _initcursor() {

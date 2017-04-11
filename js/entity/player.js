@@ -14,14 +14,13 @@ class Player extends Phaser.Sprite {
         this._combat_mode_engaged = false;
         this._initAnimations();
         this.animations.play('standing');
-        //this.animations.play('firing');
-        //this.animations.play('walking');
-        //this.animations.play('climbing');
+
         this.body.setSize(32, 48, 0, 0);
         this.spellFiring = false;
         this._initAttackSpells();
         this._nextFire = 0;
         this._spellDuration = 600;
+        console.log('wuzzarp');
         
     }
 
@@ -30,7 +29,10 @@ class Player extends Phaser.Sprite {
         this.animations.add('standing', [0, 1, 2, 3, 4], 6, true);
         this.animations.add('firing', [5, 6, 7, 8, 9], 6, true);
         this.animations.add('walking', [10, 11, 12, 13, 14], 4, true);
-        this.animations.add('climbing', [15, 16, 17, 18, 19], 6, true);
+        this.animations.add('climbing', [15, 16,/* 17, 18, */19], 6, true);
+                //this.animations.play('firing');
+        //this.animations.play('walking');
+        //this.animations.play('climbing');
     }
 
     _initcursor() {
@@ -51,75 +53,6 @@ class Player extends Phaser.Sprite {
         this.target.destroy();
         this.navigatorAlive = false;
     }
-
-    _fireSpell(typeOf) {
-        this.AttackSpell;
-        if (this.game.time.now > this._nextFire) {
-            this._nextFire = this.game.time.now + this._spellDuration;
-        this._cursorReset();
-        console.log('player firing spell');
-        //this.animations.play('firing');
-        this.spellFiring = true;
-
-        this.AttackSpell = this.AttackSpells.getFirstDead();
-        this.AttackSpell.reset(this.x, this.y);
-        this.AttackSpell.body.velocity.x = 1100;
-        this.game.time.events.add(Phaser.Timer.SECOND * 0.6, function () {
-            this.spellFiring = false;
-        }, this);
-    }}
-
-    _fireWeapon() {
-        this.bullet;
-        if (this.game.time.now > this._nextFire) {
-            if (this.currentTurret >= this.turretGroup.length) {
-                this.currentTurret = 0;
-            }
-            this._nextFire = this.game.time.now + this.turretArray[this.currentTurret][7];
-            this.bullet = this.bullets.getFirstDead();
-            this.fireIndicator.frame = 0;
-            this.bullet.reset(this.turretGroup.children[this.currentTurret].world.x, this.turretGroup.children[this.currentTurret].world.y);
-            this.game.camera.shake(0.004, 40);
-            var testRotation = this.turretGroup.children[this.currentTurret].rotation += this.rotation;
-            this.game.physics.arcade.velocityFromRotation(testRotation, this.turretArray[this.currentTurret][6], this.bullet.body.velocity);
-            this.bullet.angle = this.turretGroup.children[this.currentTurret].angle;
-            this.textGroup.children[this.currentTurret].fill = '#ff1515';
-            this.bullet.frame = this.turretArray[this.currentTurret][5];
-            var rateOfindicator = this.turretArray[this.currentTurret][7] / 1000;
-            var temporary = this.currentTurret;
-            this.game.time.events.add(Phaser.Timer.SECOND * rateOfindicator, function () {
-                this.fireIndicator.frame = 1;
-                this.textGroup.children[temporary].fill = '#f27519';
-
-            }, this);
-            this.currentTurret++;
-            this.bullet.bringToTop();
-            this.bullets.add(this.bullet);
-
-        }
-    }
-
-
-
-
-
-    _initAttackSpells() {
-        this.AttackSpells = this.game.add.group();
-        this.AttackSpells.enableBody = true;
-        this.AttackSpells.physicsBodyType = Phaser.Physics.ARCADE;
-        this.AttackSpells.createMultiple(50, 'bullet');
-        this.AttackSpells.setAll('checkWorldBounds', true);
-        this.AttackSpells.setAll('outOfBoundsKill', true);
-        this.AttackSpells.setAll('anchor.x', 0.5);
-        this.AttackSpells.setAll('anchor.y', 0.5);
-        //  --- Disable Gravity for Each Bullet
-        this.AttackSpells.forEach(function (L) {
-            L.body.allowGravity = false;
-
-        })
-    }
-
-
 
 
 

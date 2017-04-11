@@ -38,8 +38,8 @@ class SimpleLevel extends Phaser.State {
     }
     _addEnemy() {
         this.enemies = this.add.group();
-        this.enemy = new Enemy(this.game, 760, 100);
-        this.enemies.add(this.enemy);
+        // this.enemy = new Enemy(this.game, 760, 100);
+        // this.enemies.add(this.enemy);
     }
     _addUserInterface() {
         this.userInterface = new userInterface(this.game);
@@ -47,8 +47,7 @@ class SimpleLevel extends Phaser.State {
     _addSpells() {
             this._spells = new Spells(this.game, -50, -40, 10);
             console.log('spells Initialized');
-       //this._spells.anchor.setTo(this.player);
-        this.player.addChild(this._spells);
+            this.player.addChild(this._spells);
         }
         //We use this to find and create objects from the json.
         //    _findObjectsByType(targetType, tilemap, layer) {
@@ -66,20 +65,32 @@ class SimpleLevel extends Phaser.State {
         this.enemies.forEach(function (enemy, enemies, player) {
             enemy._playerPositionX = capturedPosition;
         })
-        
+
         this._spells._playerPositionX = this.player.x;
         this._spells._playerPositionY = this.player.y;
- 
+
     }
 
     _enemyPlayerCollision(enemy, player) {
-//        this.player._cursorReset();
         this.enemy._enemyDamageTaken(90);
         this.userInterface._playerDamage(20);
 
     }
+  _combatTestButton(){
+        this.combatTestButton = this.game.add.sprite (780, 5, 'CombatMode');
+        this.combatTestButton.fixedToCamera = true;
+        this.combatTestButton.inputEnabled = true;
+        this.combatTestButton.events.onInputDown.add(this._initCombatMode, this);
+    }
 
-
+    
+    _initCombatMode(){
+        this._spells._startCombatMode();
+        this.player._combatModeEnabled();
+    }
+    _endCombatMode(){
+        
+    }
 
 
     _checkCollision() {
@@ -95,7 +106,7 @@ class SimpleLevel extends Phaser.State {
         //set the physics
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
         this._loadLevel();
-      
+        
         this._addPlayer(0, 0);
         this._addEnemy();
         this._addSpells();
@@ -104,6 +115,17 @@ class SimpleLevel extends Phaser.State {
         this._map.setCollisionBetween(0, 160, true, this._collision_layer);
         //        this._map.setTileIndexCallback([33, 43, 51, 61], this.player.setOnLadder, this.player, this._ladder_layer);
         this._addUserInterface();
+
+        this.spellArray = [
+            [0, this._spells._manaBolt],
+            [1, this._spells._manaShield],
+            [2, this._spells._rainOfSpikes],
+            [3, this._spells._counterSpell],
+            [4, this._spells._manaBlast],
+            [5, this._spells._retribution]
+        ];
+            this._combatTestButton();
+      //  this._spellSelection();
     }
     update() {
         this._backgroundimg.x = this.game.camera.x * 0.3;
@@ -111,16 +133,17 @@ class SimpleLevel extends Phaser.State {
         this._checkCollision();
         this._player_position_update();
 
-        if (this.player.x < this.enemy.x + 156 && this.player.x > this.enemy.x - 156/* && this.player._combat_mode_engaged === false*/) {
-               this.enemy._CombatEngaged();
-            this.player._combatModeEnabled();
-            this._spells._startCombatMode();
-            this.game.camera.x + 50;
 
-        }
+        //        if (this.player.x < this.enemy.x + 156 && this.player.x > this.enemy.x - 156/* && this.player._combat_mode_engaged === false*/) {
+        //               this.enemy._CombatEngaged();
+        //            this.player._combatModeEnabled();
+        //            this._spells._startCombatMode();
+        //            this.game.camera.x + 50;
+        //
+        //        }
         if (this.game.input.activePointer.rightButton.isDown) {
             this.player._fireSpell(600);
-            this._spells._fireSpell();
+            //this._spells._fireSpell();
         }
     }
 }
