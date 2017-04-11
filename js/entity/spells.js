@@ -1,21 +1,3 @@
-/**
- * base class for the player.
- * @constructor
- *  game : the phaser game.
- *  posx : his location in x.
- *  posy : his location in y.
- * @method toggleCombatMode
- *  change the player mode on Combat Mode.
- * @method reload
- *  TODO: reload the current weapon magazine
- * @property onLadder
- *  the player colliding with a ladder boolean.
- *  @getter : isOnLadder;
- *  @setTrue : setOnLadder;
- *  @reset : resetOnLadder
- * @method update :
- *
- */
 class Spells extends Phaser.Sprite {
     constructor(game, posx, posy, damage) {
         super(game, posx, posy, 'shield', 0);
@@ -42,6 +24,7 @@ class Spells extends Phaser.Sprite {
         this.visible = false;
         this.spellSlotGroup.visible = false;
         this.currentSpell = undefined;
+        this.roundTimer = 5;
     }
 
 
@@ -49,9 +32,39 @@ class Spells extends Phaser.Sprite {
         this.spellSlotGroup.visible = true;
         this.turnTimer.x = this._playerPositionX;
         this.turnTimer.y = this._playerPositionY + 40;
+             this.turnTimerProgress.x = this._playerPositionX - 26;
+        this.turnTimerProgress.y = this._playerPositionY + 38;
+        this.turnTimer.visible = true;
+        this._combatCycle();
     }
+    
+    _combatCycle(){
+        this.turnTimerProgress.width = 0;
+        this.turnTimerTween = this.game.add.tween(this.turnTimerProgress).to( { width: 54 }, 6000, 'Linear', true );
+        if(this.currentSpell != undefined){
+     this.currentSpell();
+        } else {
+               
+        }
+        this.turnTimerTween.onComplete.add(this._combatCycle, this);
+    }
+    
+    _fireSpell(){
+         
+        
+    }
+        _selectSpell(currentSpell) {
+            this.currentSpell = currentSpell;
+          
+    }
+    
+    
+    
+    
+    
     _endCombatMode() {
         this.spellSlotGroup.visible = false;
+        this.turnTimer.visible = false;
     }
 
     _spellSelection() {
@@ -67,22 +80,23 @@ class Spells extends Phaser.Sprite {
             this.slotDistance += 72;
             this.spellIcon.frame = [i][0];
             this.spellIcon.inputEnabled = true;
+            let spellSelector = i;
             let spellAssigner = this.spellArray[i][1];
             this.spellIcon.events.onInputDown.add(function () {
-                this._fireSpell(spellAssigner)
+                this._selectSpell(spellAssigner),
+                    this.spellSelector = spellSelector;
+                  console.log(this.spellSelector);
             }, this);
         }
         this.turnTimer = this.game.add.image(20,200, 'turnTimer');
         this.turnTimer.anchor.setTo(0.5);
+        this.turnTimer.visible = false;
+        this.turnTimerProgress = this.game.add.tileSprite(0, 0, 54, 4, 'turnTimerProgress');
+        this.turnTimerProgress.anchor.setTo(0.0);
+       // this.turnTimer.addchild(this.turnTimerProgress);
     }
 
-    _fireSpell(currentSpell) {
-        this.game.time.events.add(Phaser.Timer.SECOND * 4, function () {
-            this.currentSpell = currentSpell;
-            this.currentSpell();
-        }, this);
 
-    }
 
     _initProjectileAttacks() {
         console.log('projectileattackInit');
@@ -128,20 +142,20 @@ class Spells extends Phaser.Sprite {
         }
     }
     _rainOfSpikes() {
-        //        this.damage = 2;
+                this.damage = 2;
         console.log('RainOvSpikes');
-        //        var dog = 12;
-        //        for (var i = 0; i < 4 + this.spellLevel; i++) {
-        //            this.AttackSpell = this.AttackSpells.getFirstDead();
-        //            this.AttackSpell.reset(this._playerPositionX + 122 + dog, 80 - dog);
-        //            this.AttackSpell.body.velocity.y = 400 + dog;
-        //            this.AttackSpell.frame = 1;
-        //            // this.AttackSpell.body.acceleration.y += 4;
-        //            dog += 12;
-        //            if (i === 4) {
-        //
-        //            }
-        //        }
+                var dog = 12;
+                for (var i = 0; i < 4 + this.spellLevel; i++) {
+                    this.AttackSpell = this.AttackSpells.getFirstDead();
+                    this.AttackSpell.reset(this._playerPositionX + 122 + dog, 80 - dog);
+                    this.AttackSpell.body.velocity.y = 400 + dog;
+                    this.AttackSpell.frame = 1;
+                    // this.AttackSpell.body.acceleration.y += 4;
+                    dog += 12;
+                    if (i === 4) {
+        
+                    }
+                }
     }
     _counterSpell() {
         console.log('CounterSpell!');

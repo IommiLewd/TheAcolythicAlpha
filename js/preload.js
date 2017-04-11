@@ -26,6 +26,7 @@ class Preload extends Phaser.State {
         this.load.image('SpellSlot', 'img/UiItems/SpellSlot.png');
         this.load.image('CombatMode', 'img/UiItems/CombatMode.png');
         this.load.image('turnTimer', 'img/UiItems/turnTimer.png');
+        this.load.image('turnTimerProgress', 'img/UiItems/turnTimerProgress.png');
         // js scripts :
         this.load.script('player', 'js/entity/PlayerRefactored.js');
         this.load.script('simpleLevel', 'js/map/simplelevel.js');
