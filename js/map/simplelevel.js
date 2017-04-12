@@ -38,8 +38,8 @@ class SimpleLevel extends Phaser.State {
     }
     _addEnemy() {
         this.enemies = this.add.group();
-        // this.enemy = new Enemy(this.game, 760, 100);
-        // this.enemies.add(this.enemy);
+        this.enemy = new Enemy(this.game, 760, 100);
+        this.enemies.add(this.enemy);
     }
     _addUserInterface() {
         this.userInterface = new userInterface(this.game);
@@ -76,29 +76,39 @@ class SimpleLevel extends Phaser.State {
         this.userInterface._playerDamage(20);
 
     }
-  _combatTestButton(){
-        this.combatTestButton = this.game.add.sprite (780, 5, 'CombatMode');
+    _combatTestButton() {
+        this.combatTestButton = this.game.add.sprite(780, 5, 'CombatMode');
         this.combatTestButton.fixedToCamera = true;
         this.combatTestButton.inputEnabled = true;
         this.combatTestButton.events.onInputDown.add(this._initCombatMode, this);
     }
 
-    
-    _initCombatMode(){
-        if(this.combatModeEnabled === false){
-        this._spells._startCombatMode();
-        this.player._combatModeEnabled();
+
+    _initCombatMode() {
+        if (this.combatModeEnabled === false) {
+            this._spells._startCombatMode();
+            this.player._combatModeEnabled();
             this.combatModeEnabled = true;
+            this.enemy._CombatEngaged();
         } else {
             this._spells._endCombatMode();
-             this.player._combat_mode_engaged = false;
+            this.player._combat_mode_engaged = false;
             this.player._cursorReset();
             this.combatModeEnabled = false;
-            
+
         }
     }
-    _endCombatMode(){
-          this._spells._endCombatMode();
+    _endCombatMode() {
+        this._spells._endCombatMode();
+        this.player._combat_mode_engaged = false;
+        this.player.deathEmitter.on = false;
+    }
+    _enemyDamage(enemy, AttackSpell){
+        console.log('enemyHit!!');
+        enemy.body.velocity.x = 0;
+        enemy.body.velocity.y = 0;
+        enemy._enemyDamageTaken(10);
+        AttackSpell.kill();
     }
 
 
@@ -107,6 +117,8 @@ class SimpleLevel extends Phaser.State {
             this.game.physics.arcade.collide(this.enemy, this.player, this._enemyPlayerCollision, undefined, this);
             this.game.physics.arcade.collide(this.player, this._collision_layer);
             this.game.physics.arcade.collide(this.player.target, this._collision_layer);
+            this.game.physics.arcade.collide(this._spells.AttackSpells, this.enemy, this._enemyDamage,undefined, this);
+        
         }
         //public methods :
         //@override:
@@ -133,8 +145,10 @@ class SimpleLevel extends Phaser.State {
             [4, this._spells._manaBlast],
             [5, this._spells._retribution]
         ];
-            this._combatTestButton();
-      //  this._spellSelection();
+        this._combatTestButton();
+        //  this._spellSelection();
+
+        this.spellSignal = this._spells.events.castSpell.add(this.player._castingAnimation, this.player, 0);
     }
     update() {
         this._backgroundimg.x = this.game.camera.x * 0.3;
@@ -143,16 +157,53 @@ class SimpleLevel extends Phaser.State {
         this._player_position_update();
 
 
-        //        if (this.player.x < this.enemy.x + 156 && this.player.x > this.enemy.x - 156/* && this.player._combat_mode_engaged === false*/) {
-        //               this.enemy._CombatEngaged();
-        //            this.player._combatModeEnabled();
-        //            this._spells._startCombatMode();
-        //            this.game.camera.x + 50;
-        //
-        //        }
+        if (this.player.x < this.enemy.x + 156 && this.player.x > this.enemy.x - 156 && this.player._combat_mode_engaged === false) {
+            this._initCombatMode();
+
+        }
         if (this.game.input.activePointer.rightButton.isDown) {
             this.player._fireSpell(600);
             //this._spells._fireSpell();
         }
     }
 }
+
+
+
+
+
+
+
+/*
+
+
+
+
+    _enemy_hit(bullet, enemy) {
+
+        bullet.kill();
+        enemy._damageTaken(16);
+        enemy.body.velocity.x = bullet.body.velocity.x / 8;
+        enemy.body.velocity.y = bullet.body.velocity.y / 8;
+        this.explosion.x = enemy.x;
+        this.explosion.y = enemy.y;
+        this.explosion.on = true;
+        this.game.time.events.add(Phaser.Timer.SECOND * 0.3, this._endExplosion, this);
+        if (enemy.health < 15 && enemy.alive) {
+            this.userInterface._updateScore(20);
+        }
+    }
+   this.game.physics.arcade.collide(this.player.bullets, this.enemies, this._enemy_hit, null, this);*/
+
+
+
+
+
+
+
+
+
+
+
+
+

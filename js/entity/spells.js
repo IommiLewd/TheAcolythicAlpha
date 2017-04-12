@@ -25,6 +25,11 @@ class Spells extends Phaser.Sprite {
         this.spellSlotGroup.visible = false;
         this.currentSpell = undefined;
         this.roundTimer = 5;
+//        this.player.animations.play('casting');
+        
+        
+        this.events.castSpell = new Phaser.Signal();
+  
     }
 
 
@@ -43,6 +48,7 @@ class Spells extends Phaser.Sprite {
         this.turnTimerProgress.width = 0;
         this.turnTimerTween = this.game.add.tween(this.turnTimerProgress).to( { width: 54 }, 6000, 'Linear', true );
         if(this.currentSpell != undefined){
+                    this.events.castSpell.dispatch();
      this.currentSpell();
         } else {
                
@@ -65,6 +71,7 @@ class Spells extends Phaser.Sprite {
             this.spellArrow.x += 72;
              }
             this.spellArrow.visible = true;
+    
     }
     
     
@@ -77,6 +84,7 @@ class Spells extends Phaser.Sprite {
         this.spellArrow.visible = false;
         this.turnTimerProgress.visible = false;
         this.turnTimerTween.stop();
+        this.currentSpell = undefined;
     }
 
     _spellSelection() {

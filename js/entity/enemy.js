@@ -36,6 +36,7 @@ class Enemy extends Phaser.Sprite {
         this._combatMode = false;
         this._initAnimations();
         this.animations.play('walking');
+            this.tint =  0xffffff;
     }
 
     _initHealthIndicator() {
