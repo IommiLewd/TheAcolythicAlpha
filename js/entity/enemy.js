@@ -36,7 +36,8 @@ class Enemy extends Phaser.Sprite {
         this._combatMode = false;
         this._initAnimations();
         this.animations.play('walking');
-            this.tint =  0xffffff;
+        this.tint =  0xffffff;
+        this.events.endOfCombat = new Phaser.Signal();
     }
 
     _initHealthIndicator() {
@@ -70,6 +71,8 @@ class Enemy extends Phaser.Sprite {
         this.healthStatus.width = this._enemyHealth / 100 * 70;
         if (this._enemyHealth < 0) {
             this.kill();
+              this.events.endOfCombat.dispatch();
+            this.body.enable = false;
         }
     }
 

@@ -29,17 +29,20 @@ class SimpleLevel extends Phaser.State {
         this._collision_layer = this._map.createLayer('CollisionLayer');
         this._background_layer = this._map.createLayer('BackLayer');
         this._collision_layer.resizeWorld();
-
     }
 
     _addPlayer(x, y) {
-        this.player = new Player(this.game, 200, 200);
-        this.player.smoothed = false;
+        var playerArr = this._findObjectsByType("PlayerStart", this._map, 'ObjectLayer');
+        this.player = new Player(this.game, playerArr[0].x, playerArr[0].y);
     }
     _addEnemy() {
         this.enemies = this.add.group();
-        this.enemy = new Enemy(this.game, 760, 100);
-        this.enemies.add(this.enemy);
+        var enemyArr = this._findObjectsByType("enemy", this._map, 'ObjectLayer');
+        for (var i = 0; i < enemyArr.length; i++) {
+            this.enemy = new Enemy(this.game, enemyArr[i].x, enemyArr[i].y);
+            this.enemies.add(this.enemy);
+            this.terminateCombat = this.enemy.events.endOfCombat.add(this._endCombatMode, this, 0);
+        }
     }
     _addUserInterface() {
         this.userInterface = new userInterface(this.game);
@@ -49,16 +52,22 @@ class SimpleLevel extends Phaser.State {
             console.log('spells Initialized');
             this.player.addChild(this._spells);
         }
-        //We use this to find and create objects from the json.
-        //    _findObjectsByType(targetType, tilemap, layer) {
-        //        var result = [];
-        //        tilemap.objects[layer].forEach(function (element) {
-        //            if (element.type == targetType) {
-        //                result.push(element);
-        //            }
-        //        }, this);
-        //        return result;
-        //    }
+        //   We use this to find and create objects from the json.
+    _findObjectsByType(targetType, tilemap, layer) {
+        var result = [];
+        tilemap.objects[layer].forEach(function (element) {
+            if (element.type == targetType) {
+                result.push(element);
+            }
+        }, this);
+        return result;
+    }
+
+
+    _ObjectsByTypeTest() {
+        var enemyArray = this._findObjectsByName("Enemy", this._map, 'ObjectLayer');
+        console.log(enemyArray);
+    }
 
     _player_position_update() {
         var capturedPosition = this.player.body.x;
@@ -84,12 +93,12 @@ class SimpleLevel extends Phaser.State {
     }
 
 
-    _initCombatMode() {
+    _initCombatMode(enemy) {
         if (this.combatModeEnabled === false) {
             this._spells._startCombatMode();
             this.player._combatModeEnabled();
             this.combatModeEnabled = true;
-            this.enemy._CombatEngaged();
+            enemy._CombatEngaged();
         } else {
             this._spells._endCombatMode();
             this.player._combat_mode_engaged = false;
@@ -98,27 +107,29 @@ class SimpleLevel extends Phaser.State {
 
         }
     }
-    _endCombatMode() {
+    _endCombatMode(enemy) {
+        this.enemies.remove(enemy);
         this._spells._endCombatMode();
         this.player._combat_mode_engaged = false;
         this.player.deathEmitter.on = false;
+        console.log('endcombatmode');
     }
-    _enemyDamage(enemy, AttackSpell){
+    _enemyDamage(AttackSpell, enemy) {
         console.log('enemyHit!!');
         enemy.body.velocity.x = 0;
         enemy.body.velocity.y = 0;
-        enemy._enemyDamageTaken(10);
+        enemy._enemyDamageTaken(40);
         AttackSpell.kill();
     }
 
 
     _checkCollision() {
-            this.game.physics.arcade.collide(this.enemy, this._collision_layer);
-            this.game.physics.arcade.collide(this.enemy, this.player, this._enemyPlayerCollision, undefined, this);
+            this.game.physics.arcade.collide(this.enemies, this._collision_layer);
+            //  this.game.physics.arcade.collide(this.enemies, this.player, this._enemyPlayerCollision, undefined, this);
             this.game.physics.arcade.collide(this.player, this._collision_layer);
             this.game.physics.arcade.collide(this.player.target, this._collision_layer);
-            this.game.physics.arcade.collide(this._spells.AttackSpells, this.enemy, this._enemyDamage,undefined, this);
-        
+            this.game.physics.arcade.collide(this._spells.AttackSpells, this.enemies, this._enemyDamage, undefined, this.enemy, this.AttackSpell);
+
         }
         //public methods :
         //@override:
@@ -149,6 +160,7 @@ class SimpleLevel extends Phaser.State {
         //  this._spellSelection();
 
         this.spellSignal = this._spells.events.castSpell.add(this.player._castingAnimation, this.player, 0);
+
     }
     update() {
         this._backgroundimg.x = this.game.camera.x * 0.3;
@@ -156,11 +168,21 @@ class SimpleLevel extends Phaser.State {
         this._checkCollision();
         this._player_position_update();
 
+        this.enemies.forEachAlive(function (enemy, enemies, player) {
+            if (this.player.x < enemy.x + 156 && this.player.x > enemy.x - 156 && this.player._combat_mode_engaged === false) {
+                this._initCombatMode(enemy);
+                console.log('proximity');
 
-        if (this.player.x < this.enemy.x + 156 && this.player.x > this.enemy.x - 156 && this.player._combat_mode_engaged === false) {
-            this._initCombatMode();
+            }
+        }, this)
 
-        }
+
+        //             
+        //        if (this.player.x < this.enemy.x + 156 && this.player.x > this.enemy.x - 156 && this.player._combat_mode_engaged === false) {
+        //            this._initCombatMode();
+        //                console.log('proximity');
+        //
+        //        }
         if (this.game.input.activePointer.rightButton.isDown) {
             this.player._fireSpell(600);
             //this._spells._fireSpell();
@@ -194,16 +216,3 @@ class SimpleLevel extends Phaser.State {
         }
     }
    this.game.physics.arcade.collide(this.player.bullets, this.enemies, this._enemy_hit, null, this);*/
-
-
-
-
-
-
-
-
-
-
-
-
-

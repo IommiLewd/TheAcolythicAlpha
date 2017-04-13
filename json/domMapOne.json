@@ -28,7 +28,55 @@
          "draworder":"topdown",
          "height":8,
          "name":"ObjectLayer",
-         "objects":[],
+         "objects":[
+                {
+                 "gid":1,
+                 "height":64,
+                 "id":1,
+                 "name":"PlayerStart",
+                 "rotation":0,
+                 "type":"PlayerStart",
+                 "visible":true,
+                 "width":64,
+                 "x":130,
+                 "y":400
+                }, 
+                {
+                 "gid":3,
+                 "height":64,
+                 "id":2,
+                 "name":"Enemy",
+                 "rotation":0,
+                 "type":"enemy",
+                 "visible":true,
+                 "width":64,
+                 "x":731,
+                 "y":377
+                }, 
+                {
+                 "gid":3,
+                 "height":64,
+                 "id":5,
+                 "name":"Enemy",
+                 "rotation":0,
+                 "type":"enemy",
+                 "visible":true,
+                 "width":64,
+                 "x":1173,
+                 "y":208
+                }, 
+                {
+                 "gid":3,
+                 "height":64,
+                 "id":6,
+                 "name":"Enemy",
+                 "rotation":0,
+                 "type":"enemy",
+                 "visible":true,
+                 "width":64,
+                 "x":1923,
+                 "y":287
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -36,26 +84,19 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":1,
+ "nextobjectid":7,
  "orientation":"orthogonal",
- "properties":
-    {
-
-    },
  "renderorder":"right-down",
  "tileheight":64,
  "tilesets":[
         {
+         "columns":8,
          "firstgid":1,
          "image":"..\/img\/tilest\/dom1.png",
          "imageheight":384,
          "imagewidth":512,
          "margin":0,
          "name":"dom1",
-         "properties":
-            {
-
-            },
          "spacing":0,
          "tilecount":48,
          "tileheight":64,
