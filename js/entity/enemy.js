@@ -57,6 +57,7 @@ class Enemy extends Phaser.Sprite {
         this.healthStatus.visible = true;
         this._combatMode = true;
         this.animations.play('standing');
+          this.scale.setTo(1, 1);
     }
 
     _initAnimations() {
@@ -64,15 +65,25 @@ class Enemy extends Phaser.Sprite {
         this.animations.add('firing', [5, 6, 7, 8, 9], 6, true);
         this.animations.add('walking', [10, 11, 12, 13, 14], 5, true);
         this.animations.add('climbing', [15, 16, 17, 18, 19], 6, true);
+        this.animations.add('death', [25, 26, 27, 28, 29], 6, false);
     }
     _enemyDamageTaken(damage) {
         //    this.game.time.events.add(Phaser.Timer.SECOND * 0.35, this._enemy_MovementReset, this);
         this._enemyHealth -= damage;
+        console.log(this._enemyHealth);
         this.healthStatus.width = this._enemyHealth / 100 * 70;
-        if (this._enemyHealth < 0) {
-            this.kill();
+        if (this._enemyHealth <= 0) {
+            this.healthBar.visible = false;
+            this.healthStatus.visible = false;
+            console.log('healthEvent');
+            this.deathAnimation = this.animations.play('death');
+            this.deathAnimation.onComplete.add(function(){
+                    this.kill();
               this.events.endOfCombat.dispatch();
             this.body.enable = false;
+                
+            }, this);
+        
         }
     }
 

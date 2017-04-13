@@ -14,11 +14,11 @@ class Spells extends Phaser.Sprite {
         this._damage = damage;
         this.spellArray = [
             [0, this._manaBolt],
-            [1, this._manaShield],
+//            [1, this._manaShield],
             [2, this._rainOfSpikes],
-            [3, this._counterSpell],
+//            [3, this._counterSpell],
             [5, this._manaBlast],
-            [5, this._retribution]
+            [6, this._retribution]
         ];
         this._spellSelection();
         this.visible = false;
@@ -98,7 +98,7 @@ class Spells extends Phaser.Sprite {
             this.spellSlotGroup.add(this.spellIcon);
             this.spellIcon.fixedToCamera = true;
             this.slotDistance += 72;
-            this.spellIcon.frame = [i][0];
+            this.spellIcon.frame = this.spellArray[i][0];
             this.spellIcon.inputEnabled = true;
             let spellSelector = i;
             let spellAssigner = this.spellArray[i][1];
@@ -143,16 +143,17 @@ class Spells extends Phaser.Sprite {
 
     _manaBolt() {
         console.log('manaboltttttt');
-                this.damage = 3;
+                this.damage = 18;
                 var stagger = 0.2;
         
-
+            
                 for (var i = 0; i < 3 /* + this.spellLevel*/ ; i++) {
                     this.game.time.events.add(Phaser.Timer.SECOND * stagger, function () {
                         this.AttackSpell = this.AttackSpells.getFirstDead();
                         this.AttackSpell.reset(this._playerPositionX + stagger + 30, this._playerPositionY + stagger);
                         this.AttackSpell.body.velocity.x = 900;
                         this.AttackSpell.frame = 0;
+                        this.AttackSpell.damage = this.damage;
                     }, this);
                     stagger += 0.2;
                 }
@@ -166,7 +167,7 @@ class Spells extends Phaser.Sprite {
         }
     }
     _rainOfSpikes() {
-                this.damage = 2;
+                this.damage = 8;
         console.log('RainOvSpikes');
                 var dog = 12;
                 for (var i = 0; i < 4 + this.spellLevel; i++) {
@@ -174,6 +175,7 @@ class Spells extends Phaser.Sprite {
                     this.AttackSpell.reset(this._playerPositionX + 122 + dog, 80 - dog);
                     this.AttackSpell.body.velocity.y = 400 + dog;
                     this.AttackSpell.frame = 1;
+                     this.AttackSpell.damage = this.damage;
                     // this.AttackSpell.body.acceleration.y += 4;
                     dog += 12;
                     if (i === 4) {

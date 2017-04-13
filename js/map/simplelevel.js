@@ -118,7 +118,8 @@ class SimpleLevel extends Phaser.State {
         console.log('enemyHit!!');
         enemy.body.velocity.x = 0;
         enemy.body.velocity.y = 0;
-        enemy._enemyDamageTaken(40);
+        console.log(AttackSpell.damage);
+        enemy._enemyDamageTaken(AttackSpell.damage);
         AttackSpell.kill();
     }
 
@@ -154,11 +155,8 @@ class SimpleLevel extends Phaser.State {
             [2, this._spells._rainOfSpikes],
             [3, this._spells._counterSpell],
             [4, this._spells._manaBlast],
-            [5, this._spells._retribution]
+            [7, this._spells._retribution]
         ];
-        this._combatTestButton();
-        //  this._spellSelection();
-
         this.spellSignal = this._spells.events.castSpell.add(this.player._castingAnimation, this.player, 0);
 
     }
@@ -174,15 +172,7 @@ class SimpleLevel extends Phaser.State {
                 console.log('proximity');
 
             }
-        }, this)
-
-
-        //             
-        //        if (this.player.x < this.enemy.x + 156 && this.player.x > this.enemy.x - 156 && this.player._combat_mode_engaged === false) {
-        //            this._initCombatMode();
-        //                console.log('proximity');
-        //
-        //        }
+        }, this);
         if (this.game.input.activePointer.rightButton.isDown) {
             this.player._fireSpell(600);
             //this._spells._fireSpell();

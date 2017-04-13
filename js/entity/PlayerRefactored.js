@@ -85,10 +85,13 @@ class Player extends Phaser.Sprite {
     }
 
     _combatModeEnabled() {
+                this.deathEmitter.setXSpeed(-100, 100);
+            this.deathEmitter.setYSpeed(-50, 50);
         this._cursorReset();
         this.scale.setTo(-1, 1);
         this._combat_mode_engaged = true;
-     this.animations.play('standing');
+     this.animations.play('casting');
+        this.deathEmitter.on = true;
     }
 
     _castingAnimation() {
